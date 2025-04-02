@@ -1,4 +1,12 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  serial,
+  integer,
+  primaryKey,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -49,3 +57,34 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at"),
   updatedAt: timestamp("updated_at"),
 });
+
+// ----------------------------------------------------------------
+
+export const food = pgTable("food", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  calories: integer("calories").notNull(),
+  protein: integer("protein"),
+  carbs: integer("carbs"),
+  fat: integer("fat"),
+  userId: integer("user_id").references(() => user.id),
+});
+
+export const meal = pgTable("meal", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  userId: integer("user_id").references(() => user.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const mealFoods = pgTable(
+  "meal_foods",
+  {
+    mealId: integer("meal_id").references(() => meal.id),
+    foodId: integer("food_id").references(() => food.id),
+    quantity: integer("quantity").notNull().default(1),
+  },
+  (table) => ({
+    pk: primaryKey(table.mealId, table.foodId),
+  })
+);
