@@ -1,3 +1,4 @@
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import {
   pgTable,
   text,
@@ -67,13 +68,13 @@ export const food = pgTable("food", {
   protein: integer("protein"),
   carbs: integer("carbs"),
   fat: integer("fat"),
-  userId: integer("user_id").references(() => user.id),
+  userId: text("user_id").references(() => user.id),
 });
 
 export const meal = pgTable("meal", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
-  userId: integer("user_id").references(() => user.id),
+  userId: text("user_id").references(() => user.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -88,3 +89,24 @@ export const mealFoods = pgTable(
     pk: primaryKey(table.mealId, table.foodId),
   })
 );
+
+export type User = InferSelectModel<typeof user>;
+export type NewUser = InferInsertModel<typeof user>;
+
+export type Session = InferSelectModel<typeof session>;
+export type NewSession = InferInsertModel<typeof session>;
+
+export type Account = InferSelectModel<typeof account>;
+export type NewAccount = InferInsertModel<typeof account>;
+
+export type Verification = InferSelectModel<typeof verification>;
+export type NewVerification = InferInsertModel<typeof verification>;
+
+export type Food = InferSelectModel<typeof food>;
+export type NewFood = InferInsertModel<typeof food>;
+
+export type Meal = InferSelectModel<typeof meal>;
+export type NewMeal = InferInsertModel<typeof meal>;
+
+export type MealFood = InferSelectModel<typeof mealFoods>;
+export type NewMealFood = InferInsertModel<typeof mealFoods>;
